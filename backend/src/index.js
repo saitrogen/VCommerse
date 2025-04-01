@@ -27,6 +27,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../../frontend/.next/static')));
+app.use(express.static(path.join(__dirname, '../../frontend/public')));
+
 // API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -34,30 +38,15 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 
-// Root route
-app.get('/', (req, res) => {
-  res.json({
-    message: 'VCommerce API is running',
-    documentation: 'http://localhost:3000/api-docs',
-    frontend: 'http://localhost:3001',
-    endpoints: {
-      auth: {
-        register: 'POST /api/auth/register',
-        login: 'POST /api/auth/login',
-        profile: 'GET /api/auth/me'
-      },
-      products: {
-        list: 'GET /api/products',
-        create: 'POST /api/products',
-        details: 'GET /api/products/:id'
-      }
-    }
-  });
+// Frontend routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/.next/server/pages/index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Frontend: http://localhost:${PORT}`);
   console.log(`API Docs: http://localhost:${PORT}/api-docs`);
 });
