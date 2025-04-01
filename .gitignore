@@ -30,3 +30,4 @@ debug.log
 # Misc
 *.swp
 *.swo
+.env
